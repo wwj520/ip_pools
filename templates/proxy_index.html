@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="apple-mobile-web-app-title" content="CodePen">
+
+    <title>代理池系统</title>
+
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            overflow: hidden;
+        }
+
+        h1 {
+            color: #0BFDFD;
+            font-weight: normal;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        a {
+            color: #0BFDFD;
+            font-weight: normal;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .g-number-group {
+            position: relative;
+        }
+
+        .g-number-group:last-of-type::after, .g-number-group:last-of-type::before {
+            display: none;
+        }
+
+        .g-number-group::before, .g-number-group::after {
+            content: '';
+            display: block;
+            position: absolute;
+            transform: translateZ(50px);
+            right: 1vw;
+            width: 0.5vw;
+            height: 0.5vw;
+            background: #0BFDFD;
+            animation: point 2s linear infinite;
+        }
+
+        .g-number-group::before {
+            bottom: 6vw;
+        }
+
+        .g-number-group::after {
+            top: 2vw;
+        }
+
+        @keyframes point {
+            0% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .g-number-group {
+            display: inline-block;
+        }
+
+        .g-number-container {
+            position: relative;
+            margin-top: 10vh;
+            text-align: center;
+            z-index: 999;
+        }
+
+        .g-number-rotate {
+            -webkit-transform: rotateX(20deg) rotateZ(0);
+            transform: rotateX(20deg) rotateZ(0);
+        }
+
+        .preserve {
+            -webkit-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+            -webkit-perspective: 1000px;
+            perspective: 1000px;
+        }
+
+        .g-number {
+            position: relative;
+            width: 3vw;
+            height: 12vw;
+            display: inline-block;
+            margin: 3vw 3vw 0 0;
+        }
+
+        .g-number .g-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3vw;
+            height: 2px;
+            background: #181919;
+            /* background: #f00; */
+        }
+
+        .g-number .g-line:nth-child(1) {
+            transform: translateY(-0.2vw);
+        }
+
+        .g-number .g-line:nth-child(2) {
+            top: 3.2vw;
+        }
+
+        .g-number .g-line:nth-child(3) {
+            transform: rotate(180deg) translateY(-0.2vw);
+            top: 6.4vw;
+        }
+
+        .g-number .g-line:nth-child(4) {
+            transform: rotate(90deg) translateY(0.2vw);
+            transform-origin: 0 center;
+        }
+
+        .g-number .g-line:nth-child(5) {
+            transform: rotate(-90deg) translateY(0.2vw);
+            transform-origin: 100% center;
+        }
+
+        .g-number .g-line:nth-child(6) {
+            top: 3.4vw;
+            transform: rotate(90deg) translateY(0.2vw);
+            transform-origin: 0 center;
+        }
+
+        .g-number .g-line:nth-child(7) {
+            top: 3.4vw;
+            transform: rotate(-90deg) translateY(0.2vw);
+            transform-origin: 100% center;
+        }
+
+        .g-number .g-line::before,
+        .g-number .g-line::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            background-color: #34eabc;
+            box-shadow: 0 0 1vw #111414, inset 0 0 0.125vmin #0BFDFD;
+        }
+
+        .g-number .g-line::before {
+            left: 0;
+            right: 50%;
+            -webkit-transition: all .5s ease-in;
+            transition: all .5s ease-in;
+        }
+
+        .g-number .g-line::after {
+            left: 50%;
+            right: 0;
+            transition: all .5s ease-out;
+        }
+
+        .g-number .translate::before, .g-number .translate::after {
+            transform: translateZ(50px);
+        }
+
+        .g-comma {
+            position: relative;
+            top: -5.4vw;
+            display: inline-block;
+            width: 1vw;
+            height: 1vw;
+            background: #181919;
+            margin: 3vw 3vw 0 -0.8vw;
+        }
+
+        .g-comma::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #34eabc;
+            -webkit-transform: translateZ(50px);
+            transform: translateZ(50px);
+        }
+
+        .g-comma::after {
+            content: "";
+            position: absolute;
+            bottom: -.8vw;
+            right: .3vw;
+            border: .2vw solid transparent;
+            border-top: 0.9vw solid #34eabc;
+            -webkit-transform: translateZ(50px) rotate(40deg);
+            transform: translateZ(50px) rotate(40deg);
+        }
+
+        .g-number[data-digit="1"] .g-line:nth-child(1)::before,
+        .g-number[data-digit="1"] .g-line:nth-child(1)::after,
+        .g-number[data-digit="1"] .g-line:nth-child(2)::before,
+        .g-number[data-digit="1"] .g-line:nth-child(2)::after,
+        .g-number[data-digit="1"] .g-line:nth-child(3)::before,
+        .g-number[data-digit="1"] .g-line:nth-child(3)::after,
+        .g-number[data-digit="1"] .g-line:nth-child(4)::before,
+        .g-number[data-digit="1"] .g-line:nth-child(4)::after,
+        .g-number[data-digit="1"] .g-line:nth-child(6)::before,
+        .g-number[data-digit="1"] .g-line:nth-child(6)::after,
+        .g-number[data-digit="2"] .g-line:nth-child(4)::before,
+        .g-number[data-digit="2"] .g-line:nth-child(4)::after,
+        .g-number[data-digit="2"] .g-line:nth-child(7)::before,
+        .g-number[data-digit="2"] .g-line:nth-child(7)::after,
+        .g-number[data-digit="3"] .g-line:nth-child(4)::before,
+        .g-number[data-digit="3"] .g-line:nth-child(4)::after,
+        .g-number[data-digit="3"] .g-line:nth-child(6)::before,
+        .g-number[data-digit="3"] .g-line:nth-child(6)::after,
+        .g-number[data-digit="4"] .g-line:nth-child(1)::before,
+        .g-number[data-digit="4"] .g-line:nth-child(1)::after,
+        .g-number[data-digit="4"] .g-line:nth-child(3)::before,
+        .g-number[data-digit="4"] .g-line:nth-child(3)::after,
+        .g-number[data-digit="4"] .g-line:nth-child(6)::before,
+        .g-number[data-digit="4"] .g-line:nth-child(6)::after,
+        .g-number[data-digit="5"] .g-line:nth-child(5)::before,
+        .g-number[data-digit="5"] .g-line:nth-child(5)::after,
+        .g-number[data-digit="5"] .g-line:nth-child(6)::before,
+        .g-number[data-digit="5"] .g-line:nth-child(6)::after,
+        .g-number[data-digit="6"] .g-line:nth-child(5)::before,
+        .g-number[data-digit="6"] .g-line:nth-child(5)::after,
+        .g-number[data-digit="7"] .g-line:nth-child(2)::before,
+        .g-number[data-digit="7"] .g-line:nth-child(2)::after,
+        .g-number[data-digit="7"] .g-line:nth-child(3)::before,
+        .g-number[data-digit="7"] .g-line:nth-child(3)::after,
+        .g-number[data-digit="7"] .g-line:nth-child(4)::before,
+        .g-number[data-digit="7"] .g-line:nth-child(4)::after,
+        .g-number[data-digit="7"] .g-line:nth-child(6)::before,
+        .g-number[data-digit="7"] .g-line:nth-child(6)::after,
+        .g-number[data-digit="9"] .g-line:nth-child(6)::before,
+        .g-number[data-digit="9"] .g-line:nth-child(6)::after,
+        .g-number[data-digit="0"] .g-line:nth-child(2)::before,
+        .g-number[data-digit="0"] .g-line:nth-child(2)::after {
+            -webkit-transform: translateZ(25px);
+            transform: translateZ(25px);
+            background: #3c4444;
+            box-shadow: 0 0 1vw #425454;
+        }
+
+    </style>
+
+</head>
+
+<body translate="no">
+<h1>
+    代理池系统
+</h1>
+<div class="g-number-container preserve">
+    <div class="g-number-rotate preserve">
+        <div class="g-number-group">
+            <div class="g-number preserve" data-digit="1">
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+            </div>
+            <div class="g-number preserve" data-digit="3">
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+            </div>
+        </div>
+        <div class="g-number-group">
+
+            <div class="g-number preserve" data-digit="5">
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+            </div>
+            <div class="g-number preserve" data-digit="8">
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+            </div>
+        </div>
+        <div class="g-number-group">
+            <div class="g-number preserve" data-digit="0">
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+            </div>
+            <div class="g-number preserve" data-digit="5">
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+                <div class="g-line preserve translate"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<h1>
+    <br>
+    <ul>
+        <!--        <li><a href="/get" target="_blank">点击获取一个IP</a></li>-->
+        <li><a href="http://httpbin.org/ip" target="_blank">查看外网ip</a></li>
+        <li><a href="/add_ip" target="_blank">添加外网ip至白名单</a></li>
+        <li><a href="/get_http" target="_blank">获取一个http类型IP</a></li>
+        <li><a href="/get_https" target="_blank">获取一个https类型IP</a></li>
+        <li><a href="/count" target="_blank">查看可用代理IP总数</a></li>
+    </ul>
+    <br>
+</h1>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    var formatNumber = function (num) {
+        return (num < 10 ? '0' + num : num) + ''
+    }
+    $(function () {
+        var emls = $('.g-number')
+        var draw = function () {
+            var time = new Date()
+
+            time = formatNumber(time.getHours()) + formatNumber(time.getMinutes()) + formatNumber(time.getSeconds())
+            for (var i = 0; i < emls.length; i++) {
+                $(emls[i]).attr('data-digit', time[i])
+            }
+        }
+        setInterval(() => {
+            draw()
+        }, 1000);
+        $('h1').click(function () {
+
+        })
+    })
+</script>
+</body>
+
+</html>
+

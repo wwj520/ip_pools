@@ -1,0 +1,204 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>代理池说明文档</title>
+    <link rel="alternate" type="application/rss+xml" title="" href="feed/index.html">
+    <link href="http://fonts.googleapis.com/css?family=Raleway:700,300" rel="stylesheet"
+          type="text/css">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/prettify.css">
+</head>
+<body>
+<div class="wrapper">
+    <nav>
+
+        <!--  	<div class="pull-left">-->
+        <!--    	<h1><a href="javascript:"><img src="../static/img/icon.png" alt="Free Documentation Template Icon" /> <span>DocWeb</span></a></h1>-->
+        <!--    </div>-->
+        <!--    -->
+        <!--    <div class="pull-right">-->
+        <!--    	<a href="#/free-documentation-html-template-docweb" target="_blank" class="btn btn-download"><img src="../static/img/download.png" width="25" alt="Download Free Documentation Template" /> Download Now</a>-->
+        <!--    </div>-->
+
+    </nav>
+    <header>
+        <div class="container">
+            <h2 class="lone-header"> 代理池 API 说明文档
+                <br><span style="font-family: 'inherit';font-size: 15px">author: jackwu</span>
+                <br><span style="font-family: 'inherit';font-size: 15px">609997553@qq.com</span>
+            </h2>
+        </div>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="docs-nav">
+                <li><strong>介绍</strong></li>
+                <!--                <li><a href="#welcome" class="cc-active">介绍</a></li>-->
+                <!--                <li><a href="#benefits" class="cc-active">结构图</a></li>-->
+                <li><a href="#features" class="cc-active">现阶段</a></li>
+                <li><a href="#doing" class="cc-active">待开发</a></li>
+                <li class="separator"></li>
+                <li><strong>调用</strong></li>
+                <li><a href="#index" class="cc-active">代理池首页</a></li>
+                <li><a href="#safe" class="cc-active">添加白名单</a></li>
+                <li><a href="#http" class="cc-active">获取http代理</a></li>
+                <li><a href="#https" class="cc-active">获取https代理</a></li>
+                <li><a href="#count" class="cc-active">查看代理数量</a></li>
+
+                <!--                <li><a href="#animation_style" class="cc-active">Animation Styles</a></li>-->
+                <!--                <li><a href="#bars_text" class="cc-active">Bars Text</a></li>-->
+                <!--                <li><a href="#vote_counter" class="cc-active">Vote Counter</a></li>-->
+                <!--                <li><a href="#rating_icons" class="cc-active">Rating Icons</a></li>-->
+                <!--                <li><a href="#rating_titles" class="cc-active">Rating Titles</a></li>-->
+                <!--                <li><a href="#bar_colors" class="cc-active">Bar Colors</a></li>-->
+            </ul>
+            <div class="docs-content">
+                                <div>
+                                    <h3 id="welcome"> 介绍</h3>
+                                    <p>
+                                        简单的实际使用场景是：爬虫程序先调用接口获取一个IP，同时还可以获取到这个IP的有效时间(还有一些服务商的IP时效的在购买套餐时就约定好的，是一个固定时间)，爬虫程序会在有效时间内一直使用这个代理IP，直到这个代理IP失效。
+                                        在大部分情况下，以上做法是可以接受的，但当采集量很大，需要使用的代理IP很多的情况下，或者更专业的采集工作中，通常都会用到代理IP池，否则你会有以下困扰
+                                    </p>
+                                    <ol>
+                                        <li>
+                                            <span style="font-weight:bolder;font-size:20px;color:darkred">需要让每一个爬虫程序去提取代理IP很繁琐。</span>
+                                            有时候从服务商那里提取代理IP时是需要发送APIKEY或者其他形式的秘钥，有的可能还需要调用端使用一些类似的SDK加密后发起调用，过程麻烦且有安全问题。如果IP服务商更换后或者套餐更换后需要调整具体的爬虫程序代码，尤其是涉及很多个爬虫程序时。又或者是爬虫程序不多，但爬虫程序被发布到几十台服务器节点上运行时，那么重新发布程序也是一个麻烦事儿。
+                                        </li>
+                                        <li>
+                                            <span style="font-weight:bolder;font-size:20px;color:darkred">程序错误可能导致的代理IP被浪费</span>
+                                            有的IP是支持并发使用的，即使假设不能并发使用也可能存在浪费情况：如果爬虫程序获取到IP后，在后续的操作中出现了一些异常导致最终无法采集到数据，重新开始后那么上一次获取的代理可能会被浪费，举例：爬虫第一步获取代理IP，第二步通过代理IP去访问网站A页面，在请求时因为网络超时、在解析结果时抛出异常、在保存采集到的数据时发生异常
+                                            等，都有可能是本次数据采集不能正常完成，而在程序重新开始时，又需要获取新的IP。
+                                        </li>
+                                        <li>
+                                            <span style="font-weight:bolder;font-size:20px;color:darkred"> 爬虫程序为了合理利用代理IP需要额外的代码逻辑，这让爬虫程序变得复杂</span>
+                                            假设从爬虫程序本身的代码入手解决第2个问题，那么大概会有两种方法：1，在第一步获取代理IP后将这个代理IP放入一个变量或者文件中，当第二步出错后重新开始第一步时先判断存放在变量中的代理IP是否还有效，有效的话继续复用。2，在第二步中添加try-catch逻辑捕获异常，再次尝试执行第二步，而不是重新从第一步开始
+                                        </li>
+                                        <li>
+                                            <span style="font-weight:bolder;font-size:20px;color:darkred">在运行中缺少有效的入口对代理IP服务进行监控</span>
+                                            如果让每一个程序各自获取代理IP，那么可能很难找到一个环节作为切入点去统计代理IP的使用量、使用率、有效性等
+                                        </li>
+                                        <li>
+                                            <span style="font-weight:bolder;font-size:20px;color:darkred">无法统筹有限的代理IP资源</span>
+                                            当代理IP资源有限，但是有多个数据采集任务时，很有可能导致采集任务A将IP耗尽，到了采集任务B需要启动时却没有IP可用。一般情况下，购买的代理服务商的套餐都是每天可以提取xxxxx个代理IP，今天用尽后就无法再提取了，只能等到第二天刷新数值。
+                                            鉴于以上问题，我琢磨着我们应该为爬虫程序提供一个独立的代理IP池服务，来应对这些问题
+                                        </li>
+                                    </ol>
+                                </div>
+                                <div>
+                                    <h3 id="benefits">结构图</h3>
+                                    <span> <img src="../static/img/proxy_1.png"></span>
+
+                                </div>
+                <div>
+                    <h3 id="features"> 现阶段</h3>
+                    <ul>
+                        <li>对爬虫程序提供一个简单的HTTP URL接口，简单调用就能获取一个可用的IP</li>
+                        <li>代理IP是被缓存起来的、缓存的IP数据可根据使用需求动态调节的、IP可复用的、能有效分配的</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 id="doing">待开发</h3>
+                    <ul>
+                        <li>对代理IP的消耗情况进行统计、提供方法让爬虫程序通过简单的配合后能统计出代理IP的数据产出率、代理可用率进行统计</li>
+                        <li>设置：某一类型的爬虫程序进行每日代理IP用量限制</li>
+                        <li>针对某一IP被封禁,实现标记效果</li>
+                        <li>代理源修正为VPS服务器拨号生成</li>
+                    </ul>
+                </div>
+                <h3 id="index">代理池首页</h3>
+                <div class="use">
+                    <a href="./proxy_index.html" target="_blank" style="margin: 150px;font-size: 30px"> 前往代理池首页</a>
+                </div>
+                <h3 id="safe">添加白名单</h3>
+                <div class="use">
+
+                    首次使用需要将自己外网IP添加白名单,访问如下网址,获取IP：<br>
+                    <a href="http://httpbin.org/ip" target="_blank" style="margin: 150px;font-weight: bolder;font-size: 30px">http://httpbin.org/ip</a>
+                    <br>
+                                  将会见到如下，复制ip:
+                    <pre class="prettyprint">{
+  "origin": "113.67.157.247"
+}</pre>
+      <span>前往 <a href="./add_ip" target="_blank" >添加ip</a></span>
+
+                </div>
+
+                <h3 id="http">获取http代理</h3>
+                <div class="use">
+                    <a href="./get_http" target="_blank" > 获取地址</a><br>
+                    <span>使用</span>
+
+                    <pre class="prettyprint">
+import requests
+http = requests.get(url='http://47.98.160.232:5000/get_http')
+ip = http.json()['ip']</pre>
+                    <span>返回 json</span>
+                    <pre class="prettyprint">{
+    "expire_time": "2023-08-31 17:07:21",
+    "ip": "59.63.101.102:4273",
+    "types": "http",
+    "use_num": "1"
+}</pre>
+                </div>
+
+                <h3 id="https">获取https代理</h3>
+                <div class="use">
+                    <a href="./get_https" target="_blank" > 获取地址</a><br>
+                    <span>使用</span>
+
+                    <pre class="prettyprint">
+import requests
+https = requests.get(url='http://47.98.160.232:5000/get_https')
+ip = https.json()['ip']</pre>
+                    <span>返回 json</span>
+                    <pre class="prettyprint">{
+  "expire_time": "2023-08-31 18:00:09",
+  "ip": "113.229.0.106:4256",
+  "types": "https",
+  "use_num": "1"
+}</pre>
+                </div>
+                <h3 id="count">查看代理数量</h3>
+                <div class="use">
+                    <a href="./count" target="_blank" style="margin: 150px;font-size: 25px">前往</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="container2"></li></div>
+    </section>
+    <section class="vibrant centered">
+        <div class="">
+            <!--            <h4> This documentation template is provided by <a href="#" target="_blank">Frittt</a>. You can download and-->
+            <!--                use this template for free. If you have used this template, please pay the developer's effort by-->
+            <!--                Tweeting, sharing on Facebook, social mention or with a linkback. Enjoy! :)</h4>-->
+        </div>
+    </section>
+    <footer>
+        <div class="">
+            <!--            <p> &copy; Copyright Frittt Templates. All Rights Reserved.More Templates <a href="http://www.cssmoban.com/"-->
+            <!--                                                                                         target="_blank" title="模板之家">模板之家</a>-->
+            <!--                - Collect from <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></p>-->
+        </div>
+    </footer>
+</div>
+<script src="../static/js/jquery.min.js"></script>
+<script type="text/javascript" src="../static/js/prettify/prettify.js"></script>
+<script src="https://cdn.bootcss.com/prettify/r298/run_prettify.js"></script>
+<script src="../static/js/layout.js"></script>
+<style>
+    .copyrights {
+        text-indent: -9999px;
+        height: 0;
+        line-height: 0;
+        font-size: 0;
+        overflow: hidden;
+    }
+</style>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加IP白名单</title>
+</head>
+<style>
+    body {
+        background-color:#000000;
+    }
+    span {
+        color: #0BFDFD;
+    }
+    form {
+        width: 800px;
+        height: 450px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -225px 0 0 -400px;
+    }
+    .content {
+        position: relative;
+        text-align: center;
+    }
+    #ip {
+        width: 200px;
+        margin: 10px;
+    }
+    #submit {
+        margin: 10px;
+    }
+
+</style>
+<body>
+<form method="post" enctype="multipart/form-data" action="#">
+    <div class="content">
+        <span>请将外网ip复制下方框内</span><br>
+        <input id='ip' type="text" name="ip" placeholder="请复制正确，否则无法使用代理"><br>
+        <input id='submit' type="submit">
+        <br>
+        <span>{{res}}</span>
+    </div>
+</form>
+<script>
+    function info() {
+        alert('校验成功，开始调用代理吧！')
+    }
+</script>
+</body>
+</html>
