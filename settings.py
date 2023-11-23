@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2023-08-28 18:10
 # @Author  : JackWu
-# @FileName: run.py
 
 # ---------------------- redis 配置 -----------------------
 HOST = 'localhost'
-PORT = 6380
+PORT = 6379
 PASSWORD = ''
 
 PROXY_NAME = 'proxies'

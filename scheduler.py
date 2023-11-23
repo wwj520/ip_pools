@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2023-08-28 18:10
 # @Author  : JackWu
-# @FileName: run.py
 import time, threading
 from db import Reids_Client
 from getter import IpProxyGetter
@@ -191,17 +190,9 @@ class Scheduler(object):
                     t2 = threading.Thread(target=adder.add_to_pool, args=(https_parameters[2],))
                     t2.start()
 
-            # if http_parameters[1] != None:
-            #     if http_parameters[0] <= lower_threshold:
-            #         adder.add_to_pool(types=http_parameters[2])  # 195
-            # if https_parameters[1] != None:
-            #     if https_parameters[0] <= lower_threshold:
-            #         adder.add_to_pool(types=https_parameters[2])
-
             time.sleep(cycle)
 
     def run(self):
-        # Scheduler.valid_proxy()
         # 创建多进程
         p1 = Process(target=Scheduler.check_pool_add)  # 从启动代理，到校验保存逻辑没有问题
         p2 = Process(target=Scheduler.valid_proxy)

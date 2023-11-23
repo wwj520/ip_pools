@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2023-08-28 18:10
 # @Author  : JackWu
-# @FileName: run.py
 import requests, re
 from settings import HTTP_URL, HTTPS_URL
 # from proxypool.settings import HTTP_URL, HTTPS_URL
