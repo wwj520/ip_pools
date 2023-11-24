@@ -64,6 +64,7 @@ class VaildityTester(object):
                 self.__conn.put(str(ProxyParameter), types='https')  # redis当中存储
             print('校验成功代理：', ProxyParameter)
         else:
+            # todo 删除逻辑没写
             print('\033[1;31m已过期代理：{}\033[0m'.format(ProxyParameter))
 
     def verify_check_switch(self):
@@ -154,7 +155,7 @@ class Scheduler(object):
             http_parameters, https_parameters = conn.queue_len()
             for i in [http_parameters, https_parameters]:
                 count = int(i[0] * IP_CEHCK_COUNT)  # 代理池存放IP数量
-                types = i[2]  # 代理池为什么类型的代理
+                types = i[2]  # 代理池是什么类型的代理
                 print('准备校验的代理IP数量', count)
                 if count == 0:
                     time.sleep(cycle)
@@ -194,13 +195,11 @@ class Scheduler(object):
 
     def run(self):
         # 创建多进程
-        p1 = Process(target=Scheduler.check_pool_add)  # 从启动代理，到校验保存逻辑没有问题
+        p1 = Process(target=Scheduler.check_pool_add)  # 从启动代理，到校验保存逻辑
         p2 = Process(target=Scheduler.valid_proxy)
         p1.start()
         p2.start()
 
 
 if __name__ == '__main__':
-    # adder = PoolAdder()
-    # adder.add_to_pool('http')
     Scheduler().valid_proxy()

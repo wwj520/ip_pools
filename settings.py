@@ -5,10 +5,10 @@
 # ---------------------- redis 配置 -----------------------
 HOST = 'localhost'
 PORT = 6379
-PASSWORD = ''
+PASSWORD = '123456'
 
 PROXY_NAME = 'proxies'
-HTTP_PROXY_NAME = 'http_proxies'  # HTPP IP存储
+HTTP_PROXY_NAME = 'http_proxies'    # HTPP IP存储
 HTTPS_PROXY_NAME = 'https_proxies'  # HTTPS IP存储
 
 # -------------------- 代理商API接口  -----------------------
@@ -16,8 +16,6 @@ HTTP_URL = 'http://webapi.http.zhimacangku.com/getip?num=20&type=2&pro=0&city=0&
 HTTPS_URL = 'http://webapi.http.zhimacangku.com/getip?num=20&type=2&pro=0&city=0&yys=0&port=11&time=1&ts=1&ys=0&cs=0&lb=1&sb=0&pb=45&mr=1&regions='
 
 # HTTPS_URL = None  # 不获得https类型
-
-# https://blog.csdn.net/weixin_45418665/article/details/105285830
 
 # ------------------- Scheduler 调度器配置 -------------------
 

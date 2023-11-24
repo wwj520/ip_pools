@@ -1,0 +1,11 @@
+*.pyc
+*.xlsx
+*.xml
+*.exe
+*.xhtml
+*.rar
+*.jpg
+.idea/
+/.idea/vcs.xml
+*.log
+venv/

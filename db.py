@@ -74,7 +74,7 @@ class Reids_Client(object):
 
     def queue_len(self, types=None):
         """
-        针对添加器，什么是开始添加，什么时候结束添加，应该查看代理池有无数据，那么查看代理池的长度
+        针对添加器，什么时候开始添加，什么时候结束添加，应该查看代理池有无数据，那么查看代理池的长度
         :param types: 代理类型
         :return:
         """
@@ -96,11 +96,3 @@ if __name__ == '__main__':
 
     conn = Reids_Client()
     print(conn.queue_len(types='http'))
-
-
-    # redis中，如果为0是所有都取出，因为这个错误导致bug，直接忽略阈值情况
-    # print('取之前长度', conn.queue_len)
-    # res = conn.get(count=1)
-    # print('取之后长度', conn.queue_len)
-    # print('取的IP', res)
-    # print(len(res))

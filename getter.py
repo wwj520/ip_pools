@@ -39,7 +39,7 @@ class IpProxyGetter(metaclass=IpProxyMeta):
         proxies = []
         for proxy in eval(f'self.{callfunc}()'):
             proxies.append(proxy)
-        return proxies  # 这里有点不好，必须等所有的proxy完毕，才返回，也可以通过生成器 yield 改装一下 断点
+        return proxies
 
     def protocol_http(self):
         """
